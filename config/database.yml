@@ -1,0 +1,45 @@
+# PostgreSQL configuration for JWT Practice
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+  # Local PostgreSQL connection
+  username: postgres
+  password: "2552447"
+  host: localhost
+  port: 5432
+
+# Development Database
+development:
+  <<: *default
+  database: jwt_practice_development
+
+# Test Database
+test:
+  <<: *default
+  database: jwt_practice_test
+
+# Production Databases
+production:
+  primary: &primary_production
+    <<: *default
+    database: jwt_practice_production
+    username: jwt_practice
+    password: <%= ENV["JWT_PRACTICE_DATABASE_PASSWORD"] %>
+
+  cache:
+    <<: *primary_production
+    database: jwt_practice_production_cache
+    migrations_paths: db/cache_migrate
+
+  queue:
+    <<: *primary_production
+    database: jwt_practice_production_queue
+    migrations_paths: db/queue_migrate
+
+  cable:
+    <<: *primary_production
+    database: jwt_practice_production_cable
+    migrations_paths: db/cable_migrate
